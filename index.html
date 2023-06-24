@@ -67,7 +67,8 @@
                 let ans = resp.response;
                 console.log(ans)
                 let ans_txt = ans.split('### Response:')[1]
-                ans_txt = ans_txt.substring(0, ans_txt.lastIndexOf('.')+1).trim()
+                // ans_txt = ans_txt.substring(0, ans_txt.lastIndexOf('.')+1).trim()
+                ans_txt = ans_txt.trim()
 
                 handleMessage({
                     from: "Llamabot",
