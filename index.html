@@ -14,7 +14,7 @@
     <div class="container">
         <div class="row">
             <h3 id="caution" class="text-center">
-                <b>This bot will try to give a plausible answer even when it doesn't know.</b>
+                <b>This Q&A bot will try to give a plausible answer for your question even when it doesn't know.</b>
                 <br/> <b>Please be cautious!!!</b>
                 <br/> <small>It can take 1~5mins for a bot to answer due to limited resources</small>
             </h2>
@@ -43,39 +43,41 @@
         document.getElementById("send-message").addEventListener("click", function(){
         // Get the text to send
         let msgElem = document.getElementById("message");
-        var text = msgElem.value;
-        
-        handleMessage({
-            from: "Me",
-            text: text
-        });
-
-        msgElem.value = "Bot is thinking.....";
-        msgElem.disabled = true;
-
-        fetch('https://llamabot-j4ovq3xt2a-du.a.run.app', {
-            method: 'POST',
-            headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({inst: text})
-        })
-        .then(res => res.json())
-        .then((resp) => {
-            let ans = resp.response;
-            console.log(ans)
-            let ans_txt = ans.split('### Response:')[1]
-            ans_txt = ans_txt.substring(0, ans_txt.lastIndexOf('.')+1).trim()
-
+        if (!msgElem.disabled) {
+            var text = msgElem.value;
+            
             handleMessage({
-                from: "Llamabot",
-                text: ans_txt
+                from: "Me",
+                text: text
             });
 
-            msgElem.value = "";
-            msgElem.disabled = false;
-        })
+            msgElem.value = "Bot is thinking.....";
+            msgElem.disabled = true;
+
+            fetch('https://llamabot-j4ovq3xt2a-du.a.run.app', {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({inst: text})
+            })
+            .then(res => res.json())
+            .then((resp) => {
+                let ans = resp.response;
+                console.log(ans)
+                let ans_txt = ans.split('### Response:')[1]
+                ans_txt = ans_txt.substring(0, ans_txt.lastIndexOf('.')+1).trim()
+
+                handleMessage({
+                    from: "Llamabot",
+                    text: ans_txt
+                });
+
+                msgElem.value = "";
+                msgElem.disabled = false;
+            })
+        }
 
     }, false); 
 
