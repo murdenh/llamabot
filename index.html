@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Llama bot</title>
+  <meta name="description" content="Llama-based Q&A chatbot">
+    <!-- Use Bootswatch CSS from cdn -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h3 id="caution" class="text-center">
+                <b>This bot will try to give a plausible answer even when it doesn't know.</b>
+                <br/> <b>Please be cautious!!!</b>
+                <br/> <small>It can take 1~5mins for a bot to answer due to limited resources</small>
+            </h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <label class="control-label">Chat with bot</label>
+                <div id="messages-container" style="height: 200px; overflow-y: scroll; border:1px solid black;">
+                    <div class="list-group" id="messages"></div>
+                </div>
+                <div id="chat"> 
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="message" id="message" placeholder="Your messag here ...">
+                                <span class="input-group-btn">
+                                    <button id="send-message" class="btn btn-success">Send Message</button>
+                                </span>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("send-message").addEventListener("click", function(){
+        // Get the text to send
+        let msgElem = document.getElementById("message");
+        var text = msgElem.value;
+        
+        handleMessage({
+            from: "Me",
+            text: text
+        });
+
+        msgElem.value = "Bot is thinking.....";
+        msgElem.disabled = true;
+
+        fetch('https://llamabot-j4ovq3xt2a-du.a.run.app', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({inst: text})
+        })
+        .then(res => res.json())
+        .then((resp) => {
+            let ans = resp.response;
+            console.log(ans)
+            let ans_txt = ans.split('### Response:')[1]
+            ans_txt = ans_txt.substring(0, ans_txt.lastIndexOf('.')+1).trim()
+
+            handleMessage({
+                from: "Llamabot",
+                text: ans_txt
+            });
+
+            msgElem.value = "";
+            msgElem.disabled = false;
+        })
+
+    }, false); 
+
+
+    function handleMessage(data) {
+        var orientation = "text-left";
+
+        if(data.from == "Me"){
+            orientation = "text-right"
+        }
+
+        var messageHTML =  '<a href="javascript:void(0);" class="list-group-item' + orientation + '">';
+                messageHTML += '<h4 class="list-group-item-heading">'+ data.from +'</h4>';
+                messageHTML += '<p class="list-group-item-text">'+ data.text +'</p>';
+            messageHTML += '</a>';
+
+        document.getElementById("messages").innerHTML += messageHTML;
+        document.getElementById("messages-container").scrollTop = 9999
+    } 
+    </script>
+    <!-- <script src="script.min.js"></script> -->
+</body>
+
+</html>
