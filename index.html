@@ -44,8 +44,13 @@
         // Get the text to send
         let msgElem = document.getElementById("message");
         if (!msgElem.disabled) {
-            var text = msgElem.value;
-            
+            let texts = msgElem.value.split('---');
+            let inst = texts[0].trim();
+            let body = {inst: inst};
+            if (texts.length >= 2) {
+              body['input'] = texts[1].trim();
+            }
+          
             handleMessage({
                 from: "Me",
                 text: text
@@ -53,14 +58,14 @@
 
             msgElem.value = "Bot is thinking.....";
             msgElem.disabled = true;
-
+            
             fetch('https://llamabot-j4ovq3xt2a-du.a.run.app', {
                 method: 'POST',
                 headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({inst: text})
+                body: JSON.stringify(body)
             })
             .then(res => res.json())
             .then((resp) => {
