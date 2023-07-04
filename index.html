@@ -44,7 +44,9 @@
         // Get the text to send
         let msgElem = document.getElementById("message");
         if (!msgElem.disabled) {
-            let texts = msgElem.value.split('---');
+            let text = msgElem.value;
+          if (text) {
+            let texts = text.split('---');
             let inst = texts[0].trim();
             let body = {inst: inst};
             if (texts.length >= 2) {
@@ -83,6 +85,7 @@
                 msgElem.value = "";
                 msgElem.disabled = false;
             })
+          }
         }
 
     }, false); 
